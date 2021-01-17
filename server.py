@@ -5,7 +5,9 @@ import base64
 
 app = Flask(__name__)
 
-base64_client = ''
+client_id = ''
+client_secret = ''
+base64_client = '{}:{}'.format(client_id, client_secret)
 
 
 @app.route('/')
@@ -16,13 +18,11 @@ def redirect():
     # setting of url
     url = 'https://zoom.us/oauth/token?grant_type=authorization_code&code={}&redirect_uri=https://38e6b2e906d8.ngrok.io'.format(
         code)
-    # encoded = base64.b64encode(
-    #     b'xx64uEzAQyyesIlbbfIhZw:tUBXAZyRCxyXUXmCkMShWolLJo1eqLFy'
-    # )
-    headers = {"Authorization": "Basic {}".format(base64_client)}
+    encoded = base64.b64encode(
+        bytes(base64_client, 'utf-8')
+    )
+    headers = {"Authorization": "Basic {}".format(encoded.decode("utf-8"))}
     response = requests.post(url, headers=headers)
-
-    return response.text
 
     return jsonify({'ready': 'ok'}), 200
 
