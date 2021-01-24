@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "react-tutorial-tailwind",
+  "private_key_id": "371864d6dfbfe61a9b48419205fd4db7f333e533",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDZpwd3XGQ9qHUv\noXr8BQj6DE4lPKUmxw1EwyuVP0H8jahoms4khSCATYdcDnIfpDDV6ABNJnjDSMuF\nPs/t/80gvyJbSJ3ZGOzJN5vPSekLAZYAjM2LmkuF7DNEfzNccxS9T5siEyHcS44h\n8NN4RJW39u1QmZ9l3VCpVx0Xw4a5fElFmi+5sYh4z+sV0HMYaSP8RkNu8y3DZ+Nj\nnpwfVI2G4gh9lBgqLVBtYzhX3KoJZ3aOsJ4q4jjfZcaoXROu4IEXcqktPKogkITa\nVar4FfTYuYXtsmYvePp5bQTViqvXPFS9L1KfNWAvoYyzSRLTDXhud03P9FUqSueW\nDabxWSW9AgMBAAECggEAAT7SbR1rOWsYWJBs+rowpfWiENZ6/3DOI6GWQ0FcaEyL\nNSYFnfHhELrg1mcCwimXWfH85nQc5sko2PdWCz+WdeSCFtGgjZh16mTWEGaU3cpB\niHlFx9G3Mun6FR9BNPs3mCm3cod3fyIziwAsxZhm3umbzAVFAzkz9/QWp4cn4zHP\nKeHJHbMAhDY7FCmxTk812/H2yB0AD5ABbSGJojakHIOsaFz6FuToyMTVLPzapqed\nnj2SQY5NZWN5H4+LlK+UbyjtALGWQir3JIO91Cdw1NypTdeLy/8yKJbZUHswQRJd\na3YQKyuZsiRMZKFoYNzUcMmf9Vh3yp3Y1GD5JpnxZQKBgQDv62VszhQjYxPE7LbM\nxQcWxi1xywuDT49/3cr0n+GjRqC0o0f7Fyk5eD7iCFFXqDSx1XHky7eOHBuk8Jz/\ne/hxgnTPEQj1HLc5S7qnrhGgA1rTM98tzvqfQAk2OsE5iOTh3kd0rE3Xu8lvqFBa\nEE+C8sy/yVMmxE7/W97Ky3nckwKBgQDoPZGa/qYfTpGgFtMD2YQR4j/q2J6AbPkq\nFeThscdYDeJ9eGnXh8C5puWR00dNQO5QxLiVGoTP1n5Y/ZvNCzPBQMcgr0FkoLWV\no9jmsDujIizACR3gn/yLKFFw2p1A+fNxn8VNvy3wZNRVwLJmp/nTnGO7GiLLWqAg\nDUL6eca2bwKBgQCWNRN4DoGvMg2jgexkwYpRqNu03cGkgYA/NtYlV6AGAGcHER80\nxehqca01CK4cqlPrbs3yx9Rw5YotNvOkRLJkJqAJMAoio8rW1WHUL3gbbV5E0roM\nzQQ+BfJ+gESPR/S8sNSd6G6H/ar8/CzqZkHRoz+rZ1lm8Qrgd11CLChsfwKBgQCO\nS6MaX6qzhfVuLG3wbucf+guFvmIneB2WrsGFk+L7Tc6XaB8ZwwDP/7WritOmPwGG\nFXKvUQdNPTQ/HGzIznNQlnsryJX9rQZ1gGXWuuZfhwH6S9u1lPEs5nA4AIrXlA6Y\ncPd4MopYP79mJ2JnycYl5S2qJ1JoXMe9u8JtLA4YGwKBgEu8dob9nnCq5zgMxSJq\ncCDbYJHohkwKw9D1e31yrsdLEsC09xdKlz06yDT4q8Ecl9mfbgule2ENqW7oZEc3\n1YnGD8/GoMBXyjzVeT2W3XE9g2QFbzf0WE1IRB0omxlsKlpAJOfUGs1CE8HBpMAr\n5DYVPN+tcNHUuWQZ1H79fuqv\n-----END PRIVATE KEY-----\n",
+  "client_email": "zoom-connector-dev@react-tutorial-tailwind.iam.gserviceaccount.com",
+  "client_id": "109013776672455293146",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/zoom-connector-dev%40react-tutorial-tailwind.iam.gserviceaccount.com"
+}

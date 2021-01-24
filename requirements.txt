@@ -1,2 +1,4 @@
-flask
-requests
+flask==1.0.2
+requests==2.21.0
+python-dotenv==0.15.0
+firebase-admin==4.4.0

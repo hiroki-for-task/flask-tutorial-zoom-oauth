@@ -30,18 +30,12 @@ PROJECT_ID = os.environ['PROJECT_ID']
 BUCKET_NAME = os.environ['BUCKET_NAME']
 CREDENTIAL_FILE_PATH = os.environ['CREDENTIAL_FILE_PATH']
 cred = credentials.Certificate(os.environ['CREDENTIAL_FILE_PATH'])
-firebase_admin.initialize_app(cred, {
-    "projectId": PROJECT_ID,
-    'storageBucket': BUCKET_NAME
-})
+firebase_admin.initialize_app()
 db = firestore.client()
 
 
-app = Flask(__name__)
 
-
-@app.route('/initialize_zoom_access_token')
-def initialize_zoom_access_token_debag():
+def initialize_zoom_access_token():
     """HTTP Cloud Function.
     Args:
         request (flask.Request): The request object.
@@ -115,28 +109,8 @@ def initialize_zoom_access_token_debag():
         return redirect(REDIRECT_TO_REACT_APP_URL, code=301)
 
 
-@app.route('/testing')
-def testing():
-    #userのEmailは与えられているとする
-    user_email = 'tf112022524277@gmail.com'
-    #emaiからenterprise_idとuser_idを取得する
-    eachEmails = db.collection('allEmails').document(user_email).get()
-    enterprise_id = eachEmails.to_dict()['enterpriseId']
-    user_id = eachEmails.to_dict()['userId']
-    #すでに取得してあるvideoのidリストを取得する
-    existed_recording_id = db.collection('enterprises').document(enterprise_id).collection('recordings').stream()
-    existed_recording_id_list = []
-    for ids in existed_recording_id:
-        existed_recording_id_list.append(ids.id)
-    #アクセストークンの取得
-    access_token = db.collection('enterprises').document(enterprise_id).collection('accessTokens').document('zoom').get().to_dict()['access_token']
-    #recordingリストを取得する
-    api_get_all_recordings = 'https://api.zoom.us/v2/users/{}/recordings'.format(user_email)
-    headers = {"Authorization": "Bearer {}".format(access_token)}
-    recordings = requests.get(api_get_all_recordings,headers=headers).json()
-    return recordings
 
-@app.route('/getExistedRecording')
+
 def getExistedRecording():
     #userのEmailは与えられているとする
     user_email = 'tf112022524277@gmail.com'
@@ -260,86 +234,3 @@ def getExistedRecording():
 
     return 'success'
 
-
-@app.route('/test')
-def test():
-    print('line1')
-    #userのEmailは与えられているとする
-    user_email = 'tf112022524277@gmail.com'
-    #emaiからenterprise_idとuser_idを取得する
-    eachEmails = db.collection('allEmails').document(user_email).get()
-    enterprise_id = eachEmails.to_dict()['enterpriseId']
-    user_id = eachEmails.to_dict()['userId']
-    recording_id = str(274294328)
-    print(enterprise_id)
-    recording_collection = db.collection('enterprises').document(enterprise_id).collection('recordings').document(recording_id)
-    recording_info = {'type' : 'video', 'app' : 'zoom'}
-    recording_collection.set(recording_info)
-    return 'success'
-
-@app.route('/test2', methods=['GET','POST'])
-def test2():
-    print('recording post is coming')
-    print(request.get_data())
-    return 'recording post is coming'
-
-@app.route('/test3')
-def test3():
-    #入力情報
-    user_email = 'tf112022524277@gmail.com'
-    meeting_type = 2
-    topic = 'Hiroki_Shimizuのテスト'
-    start_time = datetime(year=2021,month=1,day=28,hour=13,minute=0,second=0)
-    timezone = 'Asia/Tokyo'
-    password = 'password'
-    auto_recording = True
-    join_before_host = True
-    jbh_time = 0
-
-    #ここから予約投稿
-    #userのEmailは与えられているとする
-    user_email = 'tf112022524277@gmail.com'
-    #emaiからenterprise_idとuser_idを取得する
-    eachEmails = db.collection('allEmails').document(user_email).get()
-    enterprise_id = eachEmails.to_dict()['enterpriseId']
-    user_id = eachEmails.to_dict()['userId']
-    #accesss token取得
-    access_token = db.collection('enterprises').document(enterprise_id).collection('accessTokens').document('zoom').get().to_dict()['access_token']
-    start_time = '{year}-{month}-{day}T{hour}:{minute}:{second}'.format(year=start_time.year, month=(str(start_time.month)).zfill(2), day=(str(start_time.day)).zfill(2), hour=(str(start_time.hour)).zfill(2), minute=(str(start_time.minute)).zfill(2), second=(str(start_time.second)).zfill(2))
-    if auto_recording:
-        auto_recording = 'cloud'
-    else:
-        auto_recording = 'none'
-    
-    body = {
-        'topic' : topic,
-        'type' : meeting_type,
-        'start_time' : start_time,
-        'timezone' : timezone,
-        'password' : password,
-        'settings' : {
-            'join_before_host' : join_before_host,
-            'jbh_time' : jbh_time,
-            'auto_recording' : auto_recording
-        }
-    }
-    api_creat_meeting = 'https://api.zoom.us/v2/users/{}/meetings'.format(user_email)
-    headers = {"Authorization": "Bearer {}".format(access_token),'Content-Type': 'application/json'}
-    response = requests.post(api_creat_meeting ,data=json.dumps(body), headers=headers).json()
-    return response
-    reserved_id = str(response['id'])
-    reserve_meeting_collection = db.collection('enterprises').document(enterprise_id).collection('users').document(user_id).collection('reservedMeetings').document(reserved_id)
-    reserved_info = {
-        'type' : 'video',
-        'app' : 'zoom',
-        'meetingInfo' : response
-    }
-    reserve_meeting_collection.set(reserved_info)
-    return 'success'
-
-
-
-if __name__ == "__main__":
-    logger.info('[log] start server')
-    app.run(debug=True, host="0.0.0.0", port=int(
-        FLASK_SEVER_PORT if FLASK_SEVER_PORT is not None else 8080))
