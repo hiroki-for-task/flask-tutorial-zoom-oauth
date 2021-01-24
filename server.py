@@ -274,7 +274,7 @@ def test():
     print(enterprise_id)
     recording_collection = db.collection('enterprises').document(enterprise_id).collection('recordings').document(recording_id)
     recording_info = {'type' : 'video', 'app' : 'zoom'}
-    recording_collection.set(recording_info)
+    recording_collection.set(recording_info,merge=True)
     return 'success'
 
 @app.route('/test2', methods=['GET','POST'])
@@ -283,8 +283,8 @@ def test2():
     print(request.get_data())
     return 'recording post is coming'
 
-@app.route('/test3')
-def test3():
+@app.route('/reserveZoomMeeting')
+def reserveZoomMeeting():
     #入力情報
     user_email = 'tf112022524277@gmail.com'
     meeting_type = 2
@@ -326,17 +326,107 @@ def test3():
     api_creat_meeting = 'https://api.zoom.us/v2/users/{}/meetings'.format(user_email)
     headers = {"Authorization": "Bearer {}".format(access_token),'Content-Type': 'application/json'}
     response = requests.post(api_creat_meeting ,data=json.dumps(body), headers=headers).json()
-    return response
-    reserved_id = str(response['id'])
+    reserved_id = str(json.dumps(response['id']))
     reserve_meeting_collection = db.collection('enterprises').document(enterprise_id).collection('users').document(user_id).collection('reservedMeetings').document(reserved_id)
     reserved_info = {
         'type' : 'video',
         'app' : 'zoom',
         'meetingInfo' : response
     }
-    reserve_meeting_collection.set(reserved_info)
+    reserve_meeting_collection.set(reserved_info,merge=True)
     return 'success'
 
+
+@app.route('/updateReservedZoomMeeting')
+def updateReservedZoomMeeting():
+    #入力情報
+    user_email = 'tf112022524277@gmail.com'
+    meeting_type = 2
+    topic = 'Hiroki_Shimizuのテスト'
+    start_time = datetime(year=2021,month=1,day=28,hour=13,minute=0,second=0)
+    timezone = 'Asia/Tokyo'
+    password = 'password'
+    auto_recording = False
+    join_before_host = True
+    jbh_time = 0
+    meeting_id = 91600058805
+
+    #ここから予約投稿
+    #userのEmailは与えられているとする
+    user_email = 'tf112022524277@gmail.com'
+    #emaiからenterprise_idとuser_idを取得する
+    eachEmails = db.collection('allEmails').document(user_email).get()
+    enterprise_id = eachEmails.to_dict()['enterpriseId']
+    user_id = eachEmails.to_dict()['userId']
+    #accesss token取得
+    access_token = db.collection('enterprises').document(enterprise_id).collection('accessTokens').document('zoom').get().to_dict()['access_token']
+    start_time = '{year}-{month}-{day}T{hour}:{minute}:{second}'.format(year=start_time.year, month=(str(start_time.month)).zfill(2), day=(str(start_time.day)).zfill(2), hour=(str(start_time.hour)).zfill(2), minute=(str(start_time.minute)).zfill(2), second=(str(start_time.second)).zfill(2))
+    if auto_recording:
+        auto_recording = 'cloud'
+    else:
+        auto_recording = 'none'
+    
+    body = {
+        'topic' : topic,
+        'type' : meeting_type,
+        'start_time' : start_time,
+        'timezone' : timezone,
+        'password' : password,
+        'settings' : {
+            'join_before_host' : join_before_host,
+            'jbh_time' : jbh_time,
+            'auto_recording' : auto_recording
+        }
+    }
+    api_update_meeting = 'https://api.zoom.us/v2/meetings/{}'.format(meeting_id)
+    headers = {"Authorization": "Bearer {}".format(access_token),'Content-Type': 'application/json'}
+    requests.patch(api_update_meeting ,data=json.dumps(body), headers=headers)
+    return 'success'
+
+
+@app.route('/deleteZoomMeeting')
+def deleteZoomMeeting():
+    #入力情報
+    reserved_id = 99414062621
+    #userのEmailは与えられているとする
+    user_email = 'tf112022524277@gmail.com'
+    #emaiからenterprise_idとuser_idを取得する
+    eachEmails = db.collection('allEmails').document(user_email).get()
+    enterprise_id = eachEmails.to_dict()['enterpriseId']
+    user_id = eachEmails.to_dict()['userId']
+    #accesss token取得
+    access_token = db.collection('enterprises').document(enterprise_id).collection('accessTokens').document('zoom').get().to_dict()['access_token']
+    api_delete_meeting = 'https://api.zoom.us/v2/meetings/{}'.format(reserved_id)
+    headers = {"Authorization": "Bearer {}".format(access_token)}
+    requests.delete(api_delete_meeting, headers=headers)
+    reserved_id = str(reserved_id)
+    db.collection('enterprises').document(enterprise_id).collection('users').document(user_id).collection('reservedMeetings').document(reserved_id).delete()
+    return 'success'
+
+
+@app.route('/getReservedZoomMeetings')
+def getReservedZoomMeetings():
+    #userのEmailは与えられているとする
+    user_email = 'tf112022524277@gmail.com'
+    #emaiからenterprise_idとuser_idを取得する
+    eachEmails = db.collection('allEmails').document(user_email).get()
+    enterprise_id = eachEmails.to_dict()['enterpriseId']
+    user_id = eachEmails.to_dict()['userId']
+    #accesss token取得
+    access_token = db.collection('enterprises').document(enterprise_id).collection('accessTokens').document('zoom').get().to_dict()['access_token']
+    api_get_reserved_meeting_list = 'https://api.zoom.us/v2/users/{}/meetings'.format(user_email)
+    headers = {"Authorization": "Bearer {}".format(access_token)}
+    meetings = requests.get(api_get_reserved_meeting_list, headers=headers).json()['meetings']
+    for meeting in meetings:
+        reserved_id = meeting['id']
+        meeting_collection = db.collection('enterprises').document(enterprise_id).collection('users').document(user_id).collection('reservedMeetings').document(str(reserved_id))
+        meeting_info = {
+            'type' : 'video',
+            'app' : 'zoom',
+            'meetingInfo' : meeting
+        }
+        meeting_collection.set(meeting_info,merge=True)
+    return 'success'
 
 
 if __name__ == "__main__":
